@@ -1,5 +1,5 @@
 @echo off
-Title Info Finder By Nickfost
+Title Info Finder
 echo Do You Need Info? (y/n)
 SET /P need=
 if '%need%'=='y' goto INFONEEDED
