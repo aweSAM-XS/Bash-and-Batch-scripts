@@ -1,4 +1,4 @@
 @echo off
-REM 2015 Nickfost
+REM ~aweSAM~
 ipconfig /flushdns
 exit
