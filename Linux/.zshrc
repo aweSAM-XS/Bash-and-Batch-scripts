@@ -57,12 +57,29 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
+# Define a function to get the current branch name
+git_branch() {
+  git rev-parse --abbrev-ref HEAD 2>/dev/null
+}
+
+# Define a function to get the git tree icon
+git_tree_icon() {
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  if [[ -n "$branch" ]]; then
+    echo "" # You can customize the icon here. This is the default one.
+  fi
+}
+
+# Format the vcs_info_msg_0_ variable to include git branch and tree icon
+zstyle ':vcs_info:git:*' formats 'on %b $(git_tree_icon)'
+
 # override default virtualenv indicator in prompt
 VIRTUAL_ENV_DISABLE_PROMPT=1
 venv_info() {
     [ $VIRTUAL_ENV ] && echo "(%B%F{reset}$(basename $VIRTUAL_ENV)%b%F{%(#.blue.green)})"
 }
-
+	
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
@@ -85,7 +102,8 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)──}$(venv_info)(%B%F{%(#.red.blue)}%n%(#.💀.㉿)%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+    # PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)──}$(venv_info)(%B%F{%(#.red.blue)}%n%(#.💀.㉿)%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} ${vcs_info_msg_0_}'
+    PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)──}$(venv_info)(%B%F{%(#.red.blue)}%n%(#.💀.㉿)%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}] * $(git_branch)\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
     RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
 
     # enable syntax-highlighting
@@ -189,17 +207,16 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # aliases
-alias ll='ls -l'
+# alias ll='ls -l'
 alias la='ls -A'
-alias l='ls -CF'
+# alias l='ls -CF'
 alias sam='zsh'
 alias awesamity='cat /home/awesam/.awesamity-prayer.txt'
 alias 86='exit'
 alias SamS='cd /home/awesam/Code/Tools/Anon-SMS && bash /home/awesam/Code/Tools/Anon-SMS/Run.sh'
 alias snake='python3 /home/awesam/Code/Tools/Games/aweSAM_snake.py'
 alias tetris='python3 /home/awesam/Code/Tools/Games/Tetris/main.py'
-alias ovpn='cat /home/awesam/.ovpn.txt'
-alias pat="echo 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"
+alias cp="xclip -selection clipboard"
 
 # enable auto-suggestions based on the history
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
